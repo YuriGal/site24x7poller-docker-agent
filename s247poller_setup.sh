@@ -2,6 +2,13 @@
 #Author : Mohanraj G
 #Company : ZOHOCORP
 
+# Local hostname and IP address
+LOCAL_HOSTNAME="$(printenv LOCAL_HOSTNAME)"
+echo "LOCAL_HOSTNAME : $LOCAL_HOSTNAME"
+
+LOCAL_IPADDRESS="$(printenv LOCAL_IPADDRESS)"
+echo "LOCAL_IPADDRESS : $LOCAL_IPADDRESS"
+
 # DeviceKey
 KEY="$(printenv KEY)"
 echo "KEY : $KEY"
@@ -29,49 +36,6 @@ echo "ENABLE_NETWORK_MODULE : $ENABLE_NETWORK_MODULE"
 
 # Download and install On-Premise Poller gent based on DC.
 cd /opt
-DOWNLOAD_URL=""
-SERVER='https://staticdownloads.site24x7.com'
-
-setServerDomain() {
-  case "$KEY" in
-  eu_*)
-    SERVER='https://staticdownloads.site24x7.eu'
-    ;;
-  cn_*)
-    SERVER='https://staticdownloads.site24x7.cn'
-    ;;
-  in_*)
-    SERVER='https://staticdownloads.site24x7.in'
-    ;;
-  au_*)
-    SERVER='https://staticdownloads.site24x7.net.au'
-    ;;
-  esac
-}
-
-setServerDomain
-
-DOWNLOAD_URL="$SERVER/probe/Site24x7OnPremisePoller_64bit.bin"
-NETWORKMODULE_DOWNLOAD_URL="$SERVER/network/Networkplus_lin.zip"
-
-# Commenting the following lines as binary is already included within the image.
-# echo Download Starts
-
-# echo Download URL : $DOWNLOAD_URL
-
-# wget $DOWNLOAD_URL
-
-# echo Download Completed
-
-# Silent Installation
-chmod -R 755 Site24x7OnPremisePoller_64bit.bin
-
-echo "Silent installation of OPP starts"
-
-bash ./Site24x7OnPremisePoller_64bit.bin -i silent
-
-echo "Silent installation of OPP completed"
-
 
 #Download and Enable the Network Module
 if [ "$ENABLE_NETWORK_MODULE" = "true" ]; then
@@ -163,6 +127,11 @@ if [ ! ${#HOST} = 0 ]; then
 else
   echo "HOST is null"
 fi
+
+echo "Setting the hostname" && \
+printf "\nLOCAL_HOSTNAME=${LOCAL_HOSTNAME}" >> /opt/Site24x7OnPremisePoller/conf/serveragent.config && \
+echo "Setting IP address" && \
+printf "\nLOCAL_IPADDRESS=${LOCAL_IPADDRESS}\n" >> /opt/Site24x7OnPremisePoller/conf/serveragent.config
 
 # Restart
 echo "Restarting the On-Premise Poller"

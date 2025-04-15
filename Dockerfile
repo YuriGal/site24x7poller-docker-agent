@@ -15,7 +15,12 @@ RUN apt-get update -y && \
     wget -O Site24x7OnPremisePoller_64bit.bin https://staticdownloads.site24x7.com/probe/Site24x7OnPremisePoller_64bit.bin && \
     wget -O Networkplus_lin.zip https://staticdownloads.site24x7.com/network/Networkplus_lin.zip && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    cd /opt && \
+    chmod -R 755 Site24x7OnPremisePoller_64bit.bin && \
+    echo "Silent installation of OPP starts" && \
+    bash ./Site24x7OnPremisePoller_64bit.bin -i silent && \
+    echo "Silent installation of OPP completed"
 
 COPY ["s247poller_setup.sh", "/opt/"]
 
